@@ -13,32 +13,32 @@ public class ParkingLot {
         this.issuedParkingTickets = new HashSet<>();
     }
 
+    public void addNotificationsSubscriber(NotificationsSubscriber subscriber) {
+        subscribers.add(subscriber);
+    }
+
     public ParkingTicket park() throws NoParkingSpaceAvailableException {
-        if (this.isFull())
+        if (isFull())
             throw new NoParkingSpaceAvailableException("Parking lot full !!");
 
         ParkingTicket parkingTicket = new ParkingTicket(new Date().getTime());
         issuedParkingTickets.add(parkingTicket);
 
-        if (this.isFull())
+        if (isFull())
             sendParkingFullNotification();
 
         return parkingTicket;
-    }
-
-    private void sendParkingFullNotification() {
-        subscribers.forEach(NotificationsSubscriber::parkingFull);
     }
 
     public boolean unPark(ParkingTicket parkingTicket) {
         return issuedParkingTickets.remove(parkingTicket);
     }
 
-    private boolean isFull() {
-        return issuedParkingTickets.size() >= capacity;
+    private void sendParkingFullNotification() {
+        subscribers.forEach(NotificationsSubscriber::parkingFull);
     }
 
-    public void addNotificationsSubscriber(NotificationsSubscriber subscriber) {
-        subscribers.add(subscriber);
+    private boolean isFull() {
+        return issuedParkingTickets.size() >= capacity;
     }
 }
