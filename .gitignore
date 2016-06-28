@@ -1,4 +1,5 @@
 *.iml
 *.class
-/out
-/.idea
+*.xml
+out
+.idea
