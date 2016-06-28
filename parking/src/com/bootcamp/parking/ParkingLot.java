@@ -4,14 +4,13 @@ import java.util.*;
 
 public class ParkingLot {
     private int capacity;
-    private List<NotificationsSubscriber> subcribers;
-
+    private List<NotificationsSubscriber> subscribers;
     private Set<ParkingTicket> issuedParkingTickets;
 
     public ParkingLot(int capacity) {
         this.capacity = capacity;
-        this.subcribers = new ArrayList<>();
-        issuedParkingTickets = new HashSet<>();
+        this.subscribers = new ArrayList<>();
+        this.issuedParkingTickets = new HashSet<>();
     }
 
     public ParkingTicket park() throws NoParkingSpaceAvailableException {
@@ -28,7 +27,7 @@ public class ParkingLot {
     }
 
     private void sendParkingFullNotification() {
-        subcribers.forEach(NotificationsSubscriber::notifyOnParkingFull);
+        subscribers.forEach(NotificationsSubscriber::parkingFull);
     }
 
     public boolean unPark(ParkingTicket parkingTicket) {
@@ -39,7 +38,7 @@ public class ParkingLot {
         return issuedParkingTickets.size() >= capacity;
     }
 
-    public void subscribeNotifications(NotificationsSubscriber subscriber) {
-        subcribers.add(subscriber);
+    public void addNotificationsSubscriber(NotificationsSubscriber subscriber) {
+        subscribers.add(subscriber);
     }
 }

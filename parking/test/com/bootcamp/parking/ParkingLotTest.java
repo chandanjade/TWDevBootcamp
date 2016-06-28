@@ -13,11 +13,17 @@ import static org.mockito.Mockito.verify;
 public class ParkingLotTest {
 
     private ParkingLot parkingLot;
+    private int capacity;
+    private NotificationsSubscriber notificationsSubscriber;
 
     @Before
     public void setUp() throws Exception {
-        parkingLot = new ParkingLot(5);
+        capacity = 5;
+        parkingLot = new ParkingLot(capacity);
+        notificationsSubscriber = mock(NotificationsSubscriber.class);
+        parkingLot.addNotificationsSubscriber(notificationsSubscriber);
     }
+
     @Test
     public void shouldBeAbleToParkACar() throws Exception {
         Assert.assertNotNull(parkingLot.park());
@@ -30,77 +36,37 @@ public class ParkingLotTest {
     }
 
     @Test
+    public void shouldNotBeAbleToUnParkACarWithoutATicket() throws Exception {
+        Assert.assertFalse(parkingLot.unPark(null));
+    }
+
+    @Test
     public void shouldNotBeAbleToUnParkACarWithUnissuedTicket() throws Exception {
         parkingLot.park();
         Assert.assertFalse(parkingLot.unPark(new ParkingTicket(new Date().getTime())));
     }
 
-    @Test
-    public void shouldNotBeAbleToUnParkACarWithNullTicket() throws Exception {
-        Assert.assertFalse(parkingLot.unPark(null));
-    }
-
     @Test(expected = NoParkingSpaceAvailableException.class)
     public void shouldNotBeAbleToParkWhenParkingLotIsFull() throws Exception {
-        parkingLot.park();
-        parkingLot.park();
-        parkingLot.park();
-        parkingLot.park();
-        parkingLot.park();
-        parkingLot.park();
+        for (int i = 0; i < capacity + 1; i++)
+            parkingLot.park();
     }
 
     @Test
-    public void isFullShouldReturnFalseIfParkingLotIsNotFull() throws Exception {
-        ParkingOwner parkingOwner = mock(ParkingOwner.class);
-        parkingLot.subscribeNotifications(parkingOwner);
-        parkingLot.park();
-        parkingLot.park();
-        parkingLot.park();
-        parkingLot.park();
-        verify(parkingOwner, times(0)).notifyOnParkingFull();
+    public void shouldNotifySubscribersIfParkingLotIsFull() throws Exception {
+        for (int i = 0; i < capacity; i++)
+            parkingLot.park();
+
+        verify(notificationsSubscriber, times(1)).parkingFull();
     }
 
     @Test
-    public void isFullShouldReturnTrueIfParkingLotIsFull() throws Exception {
-        ParkingOwner parkingOwner = mock(ParkingOwner.class);
-        parkingLot.subscribeNotifications(parkingOwner);
-        parkingLot.park();
-        parkingLot.park();
-        parkingLot.park();
-        parkingLot.park();
-        parkingLot.park();
-        verify(parkingOwner, times(1)).notifyOnParkingFull();
+    public void shouldNotNotifySubscribersIfParkingLotIsNotFull() throws Exception {
+        for (int i = 0; i < capacity - 1; i++)
+            parkingLot.park();
+
+        verify(notificationsSubscriber, times(0)).parkingFull();
     }
-
-    @Test
-    public void notifySecurityOnParkingFull() throws Exception {
-        NotificationsSubscriber securityPersonal = mock(SecurityPersonal.class);
-        parkingLot.subscribeNotifications(securityPersonal);
-        parkingLot.park();
-        parkingLot.park();
-        parkingLot.park();
-        parkingLot.park();
-        parkingLot.park();
-        verify(securityPersonal, times(1)).notifyOnParkingFull();
-    }
-
-    @Test
-    public void shouldNotifyAllSubscribersIfParkingFull() throws Exception {
-        NotificationsSubscriber securityPersonal = mock(SecurityPersonal.class);
-        NotificationsSubscriber parkingOwner = mock(ParkingOwner.class);
-        parkingLot.subscribeNotifications(securityPersonal);
-        parkingLot.subscribeNotifications(parkingOwner);
-        parkingLot.park();
-        parkingLot.park();
-        parkingLot.park();
-        parkingLot.park();
-        parkingLot.park();
-        verify(securityPersonal, times(1)).notifyOnParkingFull();
-        verify(parkingOwner, times(1)).notifyOnParkingFull();
-
-    }
-
 
 
 }
