@@ -29,6 +29,12 @@ public class ParkingLotTest {
         Assert.assertNotNull(parkingLot.park());
     }
 
+    @Test(expected = NoParkingSpaceAvailableException.class)
+    public void shouldNotBeAbleToParkWhenParkingLotIsFull() throws Exception {
+        for (int i = 0; i < capacity + 1; i++)
+            parkingLot.park();
+    }
+
     @Test
     public void shouldBeAbleToUnParkACar() throws Exception {
         ParkingTicket parkingTicket = parkingLot.park();
@@ -44,12 +50,6 @@ public class ParkingLotTest {
     public void shouldNotBeAbleToUnParkACarWithUnissuedTicket() throws Exception {
         parkingLot.park();
         Assert.assertFalse(parkingLot.unPark(new ParkingTicket(new Date().getTime())));
-    }
-
-    @Test(expected = NoParkingSpaceAvailableException.class)
-    public void shouldNotBeAbleToParkWhenParkingLotIsFull() throws Exception {
-        for (int i = 0; i < capacity + 1; i++)
-            parkingLot.park();
     }
 
     @Test
@@ -68,5 +68,34 @@ public class ParkingLotTest {
         verify(notificationsSubscriber, times(0)).parkingFull();
     }
 
+    @Test
+    public void shouldNotifySubscribersIfParkingLotBecomesAvailableAfterBeingFull() throws Exception {
+        ParkingTicket ticket = null;
+        for (int i = 0; i < capacity; i++)
+            ticket = parkingLot.park();
 
+        verify(notificationsSubscriber, times(1)).parkingFull();
+        parkingLot.unPark(ticket);
+        verify(notificationsSubscriber, times(1)).parkingAvailable();
+    }
+
+    @Test
+    public void shouldNotifySubscribersIfParkingLotBecomesAvailableAfterBeingFullOnlyOnce() throws Exception {
+        ParkingTicket ticket1 = parkingLot.park();
+        ParkingTicket ticket2 = parkingLot.park();
+        for (int i = 0; i < capacity-2; i++)
+            parkingLot.park();
+        verify(notificationsSubscriber, times(1)).parkingFull();
+        parkingLot.unPark(ticket1);
+        parkingLot.unPark(ticket2);
+        verify(notificationsSubscriber, times(1)).parkingAvailable();
+    }
+
+    @Test
+    public void shouldNotNotifyParkingAvailableIfParkingLotWasNeverFull() throws Exception {
+        ParkingTicket ticket1 = parkingLot.park();
+        ParkingTicket ticket2 = parkingLot.park();
+        parkingLot.unPark(ticket1);
+        verify(notificationsSubscriber, times(0)).parkingAvailable();
+    }
 }

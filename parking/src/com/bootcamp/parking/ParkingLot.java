@@ -3,7 +3,7 @@ package com.bootcamp.parking;
 import java.util.*;
 
 public class ParkingLot {
-    private int capacity;
+    private final int capacity;
     private List<NotificationsSubscriber> subscribers;
     private Set<ParkingTicket> issuedParkingTickets;
 
@@ -31,11 +31,20 @@ public class ParkingLot {
     }
 
     public boolean unPark(ParkingTicket parkingTicket) {
-        return issuedParkingTickets.remove(parkingTicket);
+        boolean isFullBeforeUnPark = isFull();
+        boolean isUnParked = issuedParkingTickets.remove(parkingTicket);
+        if (isFullBeforeUnPark && isUnParked) {
+            sendParkingAvailableNotification();
+        }
+        return isUnParked;
     }
 
     private void sendParkingFullNotification() {
         subscribers.forEach(NotificationsSubscriber::parkingFull);
+    }
+
+    private void sendParkingAvailableNotification() {
+        subscribers.forEach(NotificationsSubscriber::parkingAvailable);
     }
 
     private boolean isFull() {
