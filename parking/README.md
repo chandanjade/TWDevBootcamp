@@ -34,3 +34,9 @@ So that I can take away the Parking Full sign
 As a parking lot Owner  
 I want a parking attendant to park cars  
 So that I can make decisions on where to park the cars
+
+
+## Story 7
+As a parking lot Owner  
+I want a parking attendent to evenly direct cars to the lots  
+So that the lots have an evenly distribution
