@@ -24,3 +24,9 @@ So that I can display a parking full board
 As a Security Personal  
 I want to get notified when Parking Lot is full  
 So that I can rearrange security
+
+## Story 5
+As a parking lot Owner
+I want to know when the parking lot has space again
+So that I can take away the Parking Full sign
+
