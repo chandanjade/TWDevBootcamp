@@ -30,3 +30,7 @@ As a parking lot Owner
 I want to know when the parking lot has space again  
 So that I can take away the Parking Full sign  
 
+## Story 6
+As a parking lot Owner  
+I want a parking attendant to park cars  
+So that I can make decisions on where to park the cars
