@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.util.Date;
 
+import static junit.framework.TestCase.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -33,6 +34,8 @@ public class ParkingLotTest {
     public void shouldNotBeAbleToParkWhenParkingLotIsFull() throws Exception {
         for (int i = 0; i < capacity + 1; i++)
             parkingLot.park();
+
+        fail("Did not throw exception");
     }
 
     @Test
