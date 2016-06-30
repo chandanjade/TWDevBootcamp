@@ -22,6 +22,7 @@ public class ParkingLot {
             throw new NoParkingSpaceAvailableException("Parking lot full !!");
 
         ParkingTicket parkingTicket = new ParkingTicket(new Date().getTime());
+
         issuedParkingTickets.add(parkingTicket);
 
         if (isFull())
@@ -47,7 +48,7 @@ public class ParkingLot {
         subscribers.forEach(NotificationsSubscriber::parkingAvailable);
     }
 
-    private boolean isFull() {
+    boolean isFull() {
         return issuedParkingTickets.size() >= capacity;
     }
 }

@@ -98,4 +98,6 @@ public class ParkingLotTest {
         parkingLot.unPark(ticket1);
         verify(notificationsSubscriber, times(0)).parkingAvailable();
     }
+
+
 }
