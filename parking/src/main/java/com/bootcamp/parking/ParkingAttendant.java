@@ -15,8 +15,11 @@ public class ParkingAttendant {
             throw new NoParkingSpaceAvailableException("No parking lots available to park");
         }
 
-        if(parkingLots.get(0).isNotFull())
-            return parkingLots.get(0).park(new Object());
+        for (ParkingLot parkingLot : parkingLots) {
+            if (parkingLot.isNotFull())
+                return parkingLot.park(new Object());
+
+        }
 
         return null;
     }
