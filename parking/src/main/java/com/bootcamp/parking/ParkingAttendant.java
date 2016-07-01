@@ -21,7 +21,7 @@ public class ParkingAttendant {
 
         }
 
-        return null;
+        throw new NoParkingSpaceAvailableException("No parking lots available to park");
     }
 
 
