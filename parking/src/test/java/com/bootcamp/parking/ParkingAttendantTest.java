@@ -71,4 +71,31 @@ public class ParkingAttendantTest {
         Assert.assertNotNull(attendant.park(new Object()));
         fail("Did not throw NoParkingSpaceAvailableException");
     }
+
+    @Test
+    public void parkingAttendantShouldBeAbleToParkACarWithEvenlyDistributionStrategy() throws Exception {
+        ParkingLot parkingLotOne = mock(ParkingLot.class);
+        when(parkingLotOne.isNotFull()).thenReturn(true);
+        when(parkingLotOne.availableSlots()).thenReturn(2);
+        when(parkingLotOne.park(any(Object.class))).thenReturn(new ParkingTicket(1l));
+        parkingLots.add(parkingLotOne);
+
+        ParkingLot parkingLotTwo=mock(ParkingLot.class);
+        when(parkingLotTwo.isNotFull()).thenReturn(true);
+        when(parkingLotOne.availableSlots()).thenReturn(4);
+        when(parkingLotTwo.park(any(Object.class))).thenReturn(new ParkingTicket(1l));
+        parkingLots.add(parkingLotTwo);
+
+        ParkingLot parkingLotThree=mock(ParkingLot.class);
+        when(parkingLotThree.isNotFull()).thenReturn(true);
+        when(parkingLotOne.availableSlots()).thenReturn(3);
+        when(parkingLotThree.park(any(Object.class))).thenReturn(new ParkingTicket(1l));
+        parkingLots.add(parkingLotTwo);
+
+        attendant = new ParkingAttendant(parkingLots, new EvenlyDistributionStrategy());
+
+        Object vehicleOne = new Object();
+        attendant.park(vehicleOne);
+        verify(parkingLotTwo,times(1)).park(vehicleOne);
+    }
 }
