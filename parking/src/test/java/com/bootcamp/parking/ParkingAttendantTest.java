@@ -1,5 +1,7 @@
 package com.bootcamp.parking;
 
+import com.bootcamp.parking.strategy.EvenlyDistributionStrategy;
+import com.bootcamp.parking.strategy.FirstAvailableFirstStrategy;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +30,7 @@ public class ParkingAttendantTest {
         when(parkingLot.isNotFull()).thenReturn(true);
         when(parkingLot.park(any(Object.class))).thenReturn(new ParkingTicket(1l));
         parkingLots.add(parkingLot);
-        attendant = new ParkingAttendant(parkingLots);
+        attendant = new ParkingAttendant(parkingLots, new FirstAvailableFirstStrategy());
         Assert.assertNotNull(attendant.park(new Object()));
     }
 
@@ -44,7 +46,7 @@ public class ParkingAttendantTest {
         when(parkingLotTwo.park(any(Object.class))).thenReturn(new ParkingTicket(1l));
         parkingLots.add(parkingLotTwo);
 
-        attendant = new ParkingAttendant(parkingLots);
+        attendant = new ParkingAttendant(parkingLots, new FirstAvailableFirstStrategy());
         attendant.park(new Object());
         verify(parkingLotOne, times(0)).park(any(Object.class));
         verify(parkingLotTwo, times(1)).park(any(Object.class));
@@ -53,7 +55,7 @@ public class ParkingAttendantTest {
 
     @Test(expected = NoParkingSpaceAvailableException.class)
     public void shouldThrowExceptionWhenNoParkingLotsAreAssignedToAttendant() throws NoParkingSpaceAvailableException {
-        attendant = new ParkingAttendant(null);
+        attendant = new ParkingAttendant(null, new FirstAvailableFirstStrategy());
         Assert.assertNotNull(attendant.park(new Object()));
         fail("Did not throw NoParkingSpaceAvailableException");
     }
@@ -67,7 +69,7 @@ public class ParkingAttendantTest {
         parkingLots.add(parkingLotOne);
         parkingLots.add(parkingLotTwo);
 
-        attendant = new ParkingAttendant(parkingLots);
+        attendant = new ParkingAttendant(parkingLots, new FirstAvailableFirstStrategy());
         Assert.assertNotNull(attendant.park(new Object()));
         fail("Did not throw NoParkingSpaceAvailableException");
     }
@@ -78,19 +80,27 @@ public class ParkingAttendantTest {
         when(parkingLotOne.isNotFull()).thenReturn(true);
         when(parkingLotOne.availableSlots()).thenReturn(2);
         when(parkingLotOne.park(any(Object.class))).thenReturn(new ParkingTicket(1l));
-        parkingLots.add(parkingLotOne);
 
         ParkingLot parkingLotTwo=mock(ParkingLot.class);
         when(parkingLotTwo.isNotFull()).thenReturn(true);
-        when(parkingLotOne.availableSlots()).thenReturn(4);
+        when(parkingLotTwo.availableSlots()).thenReturn(4);
         when(parkingLotTwo.park(any(Object.class))).thenReturn(new ParkingTicket(1l));
-        parkingLots.add(parkingLotTwo);
 
         ParkingLot parkingLotThree=mock(ParkingLot.class);
         when(parkingLotThree.isNotFull()).thenReturn(true);
-        when(parkingLotOne.availableSlots()).thenReturn(3);
+        when(parkingLotThree.availableSlots()).thenReturn(3);
         when(parkingLotThree.park(any(Object.class))).thenReturn(new ParkingTicket(1l));
+
+        when(parkingLotOne.compareTo(parkingLotTwo)).thenReturn(-1);
+        when(parkingLotOne.compareTo(parkingLotThree)).thenReturn(-1);
+        when(parkingLotTwo.compareTo(parkingLotOne)).thenReturn(1);
+        when(parkingLotTwo.compareTo(parkingLotThree)).thenReturn(1);
+        when(parkingLotThree.compareTo(parkingLotOne)).thenReturn(1);
+        when(parkingLotThree.compareTo(parkingLotTwo)).thenReturn(-1);
+
+        parkingLots.add(parkingLotOne);
         parkingLots.add(parkingLotTwo);
+        parkingLots.add(parkingLotThree);
 
         attendant = new ParkingAttendant(parkingLots, new EvenlyDistributionStrategy());
 

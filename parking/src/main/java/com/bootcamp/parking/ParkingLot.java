@@ -2,7 +2,7 @@ package com.bootcamp.parking;
 
 import java.util.*;
 
-public class ParkingLot {
+public class ParkingLot implements Comparable<ParkingLot>{
     private final int capacity;
     private List<NotificationsSubscriber> subscribers;
     private Set<ParkingTicket> issuedParkingTickets;
@@ -52,7 +52,21 @@ public class ParkingLot {
         return issuedParkingTickets.size() >= capacity;
     }
 
-    boolean isNotFull() {
+    public boolean isNotFull() {
         return !isFull();
+    }
+
+    public int availableSlots() {
+        return capacity - issuedParkingTickets.size();
+    }
+
+    @Override
+    public int compareTo(ParkingLot o) {
+        if(this.availableSlots() > o.availableSlots())
+            return 1;
+        if(this.availableSlots() < o.availableSlots())
+            return -1;
+        return 0;
+//        return this.availableSlots() - o.availableSlots();
     }
 }
