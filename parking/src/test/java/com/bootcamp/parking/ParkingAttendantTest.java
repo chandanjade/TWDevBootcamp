@@ -6,7 +6,6 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
@@ -33,13 +32,6 @@ public class ParkingAttendantTest {
         Assert.assertNotNull(attendant.park(new Object()));
     }
 
-    @Test(expected = NoParkingSpaceAvailableException.class)
-    public void shouldNotAbleToParkWhenNoParkingLotsAreAvailable() throws NoParkingSpaceAvailableException {
-        attendant = new ParkingAttendant(null);
-        Assert.assertNotNull(attendant.park(new Object()));
-        fail("Did not throw NoParkingSpaceAvailableException");
-    }
-
     @Test
     public void shouldBeAbleToParkInSecondLotIfFirstLotIsFull() throws NoParkingSpaceAvailableException {
         ParkingLot parkingLotOne = mock(ParkingLot.class);
@@ -57,5 +49,26 @@ public class ParkingAttendantTest {
         verify(parkingLotOne, times(0)).park(any(Object.class));
         verify(parkingLotTwo, times(1)).park(any(Object.class));
 
+    }
+
+    @Test(expected = NoParkingSpaceAvailableException.class)
+    public void shouldThrowExceptionWhenNoParkingLotsAreAssignedToAttendant() throws NoParkingSpaceAvailableException {
+        attendant = new ParkingAttendant(null);
+        Assert.assertNotNull(attendant.park(new Object()));
+        fail("Did not throw NoParkingSpaceAvailableException");
+    }
+
+    @Test(expected = NoParkingSpaceAvailableException.class)
+    public void shouldThrowExceptionWhenAllParkingLotsAreFull() throws NoParkingSpaceAvailableException {
+        ParkingLot parkingLotOne = mock(ParkingLot.class);
+        when(parkingLotOne.isNotFull()).thenReturn(false);
+        ParkingLot parkingLotTwo=mock(ParkingLot.class);
+        when(parkingLotTwo.isNotFull()).thenReturn(false);
+        parkingLots.add(parkingLotOne);
+        parkingLots.add(parkingLotTwo);
+
+        attendant = new ParkingAttendant(parkingLots);
+        Assert.assertNotNull(attendant.park(new Object()));
+        fail("Did not throw NoParkingSpaceAvailableException");
     }
 }
