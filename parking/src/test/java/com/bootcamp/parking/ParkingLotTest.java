@@ -27,20 +27,20 @@ public class ParkingLotTest {
 
     @Test
     public void shouldBeAbleToParkACar() throws Exception {
-        Assert.assertNotNull(parkingLot.park());
+        Assert.assertNotNull(parkingLot.park(new Object()));
     }
 
     @Test(expected = NoParkingSpaceAvailableException.class)
     public void shouldNotBeAbleToParkWhenParkingLotIsFull() throws Exception {
         for (int i = 0; i < capacity + 1; i++)
-            parkingLot.park();
+            parkingLot.park(new Object());
 
         fail("Did not throw exception");
     }
 
     @Test
     public void shouldBeAbleToUnParkACar() throws Exception {
-        ParkingTicket parkingTicket = parkingLot.park();
+        ParkingTicket parkingTicket = parkingLot.park(new Object());
         Assert.assertTrue(parkingLot.unPark(parkingTicket));
     }
 
@@ -51,14 +51,14 @@ public class ParkingLotTest {
 
     @Test
     public void shouldNotBeAbleToUnParkACarWithUnissuedTicket() throws Exception {
-        parkingLot.park();
+        parkingLot.park(new Object());
         Assert.assertFalse(parkingLot.unPark(new ParkingTicket(new Date().getTime())));
     }
 
     @Test
     public void shouldNotifySubscribersIfParkingLotIsFull() throws Exception {
         for (int i = 0; i < capacity; i++)
-            parkingLot.park();
+            parkingLot.park(new Object());
 
         verify(notificationsSubscriber, times(1)).parkingFull();
     }
@@ -66,7 +66,7 @@ public class ParkingLotTest {
     @Test
     public void shouldNotNotifySubscribersIfParkingLotIsNotFull() throws Exception {
         for (int i = 0; i < capacity - 1; i++)
-            parkingLot.park();
+            parkingLot.park(new Object());
 
         verify(notificationsSubscriber, times(0)).parkingFull();
     }
@@ -75,7 +75,7 @@ public class ParkingLotTest {
     public void shouldNotifySubscribersIfParkingLotBecomesAvailableAfterBeingFull() throws Exception {
         ParkingTicket ticket = null;
         for (int i = 0; i < capacity; i++)
-            ticket = parkingLot.park();
+            ticket = parkingLot.park(new Object());
 
         verify(notificationsSubscriber, times(1)).parkingFull();
         parkingLot.unPark(ticket);
@@ -84,10 +84,10 @@ public class ParkingLotTest {
 
     @Test
     public void shouldNotifySubscribersIfParkingLotBecomesAvailableAfterBeingFullOnlyOnce() throws Exception {
-        ParkingTicket ticket1 = parkingLot.park();
-        ParkingTicket ticket2 = parkingLot.park();
+        ParkingTicket ticket1 = parkingLot.park(new Object());
+        ParkingTicket ticket2 = parkingLot.park(new Object());
         for (int i = 0; i < capacity-2; i++)
-            parkingLot.park();
+            parkingLot.park(new Object());
         verify(notificationsSubscriber, times(1)).parkingFull();
         parkingLot.unPark(ticket1);
         parkingLot.unPark(ticket2);
@@ -96,8 +96,8 @@ public class ParkingLotTest {
 
     @Test
     public void shouldNotNotifyParkingAvailableIfParkingLotWasNeverFull() throws Exception {
-        ParkingTicket ticket1 = parkingLot.park();
-        ParkingTicket ticket2 = parkingLot.park();
+        ParkingTicket ticket1 = parkingLot.park(new Object());
+        ParkingTicket ticket2 = parkingLot.park(new Object());
         parkingLot.unPark(ticket1);
         verify(notificationsSubscriber, times(0)).parkingAvailable();
     }

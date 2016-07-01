@@ -17,7 +17,7 @@ public class ParkingLot {
         subscribers.add(subscriber);
     }
 
-    public ParkingTicket park() throws NoParkingSpaceAvailableException {
+    public ParkingTicket park(Object vehicle) throws NoParkingSpaceAvailableException {
         if (isFull())
             throw new NoParkingSpaceAvailableException("Parking lot full !!");
 
