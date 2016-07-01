@@ -60,6 +60,7 @@ public class ParkingLotTest {
         for (int i = 0; i < capacity; i++)
             parkingLot.park(new Object());
 
+        Assert.assertFalse(parkingLot.isNotFull());
         verify(notificationsSubscriber, times(1)).parkingFull();
     }
 
@@ -68,6 +69,7 @@ public class ParkingLotTest {
         for (int i = 0; i < capacity - 1; i++)
             parkingLot.park(new Object());
 
+        Assert.assertTrue(parkingLot.isNotFull());
         verify(notificationsSubscriber, times(0)).parkingFull();
     }
 
