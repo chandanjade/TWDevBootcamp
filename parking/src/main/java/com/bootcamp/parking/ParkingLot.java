@@ -51,4 +51,8 @@ public class ParkingLot {
     boolean isFull() {
         return issuedParkingTickets.size() >= capacity;
     }
+
+    boolean isNotFull() {
+        return !isFull();
+    }
 }

@@ -6,11 +6,11 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class ParkingAttendantTest {
 
@@ -26,6 +26,7 @@ public class ParkingAttendantTest {
     @Test
     public void parkingAttendantShouldBeAbleToParkACar() throws Exception {
         ParkingLot parkingLot = mock(ParkingLot.class);
+        when(parkingLot.isNotFull()).thenReturn(true);
         when(parkingLot.park(any(Object.class))).thenReturn(new ParkingTicket(1l));
         parkingLots.add(parkingLot);
         attendant = new ParkingAttendant(parkingLots);
@@ -41,16 +42,20 @@ public class ParkingAttendantTest {
 
     @Test
     public void shouldBeAbleToParkInSecondLotIfFirstLotIsFull() throws NoParkingSpaceAvailableException {
-        ParkingLot parkingLot1 = mock(ParkingLot.class);
-        when(parkingLot1.park(any(Object.class))).thenReturn(null);
-        parkingLots.add(parkingLot1);
+        ParkingLot parkingLotOne = mock(ParkingLot.class);
+        when(parkingLotOne.isNotFull()).thenReturn(false);
+        when(parkingLotOne.park(any(Object.class))).thenReturn(new ParkingTicket(1l));
+        parkingLots.add(parkingLotOne);
 
-        ParkingLot parkingLot2=mock(ParkingLot.class);
-        ParkingTicket parkingTicket = new ParkingTicket(1l);
-        when(parkingLot2.park(any(Object.class))).thenReturn(parkingTicket);
-        parkingLots.add(parkingLot2);
+        ParkingLot parkingLotTwo=mock(ParkingLot.class);
+        when(parkingLotTwo.isNotFull()).thenReturn(true);
+        when(parkingLotTwo.park(any(Object.class))).thenReturn(new ParkingTicket(1l));
+        parkingLots.add(parkingLotTwo);
 
         attendant = new ParkingAttendant(parkingLots);
+        attendant.park(new Object());
+        verify(parkingLotOne, times(0)).park(any(Object.class));
+        verify(parkingLotTwo, times(1)).park(any(Object.class));
 
     }
 }

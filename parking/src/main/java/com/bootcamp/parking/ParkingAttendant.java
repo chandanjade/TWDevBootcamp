@@ -11,11 +11,14 @@ public class ParkingAttendant {
     }
 
     public ParkingTicket park(Object vehicle) throws NoParkingSpaceAvailableException {
-        if (this.parkingLots == null || this.parkingLots.isEmpty())
+        if (this.parkingLots == null || this.parkingLots.isEmpty()) {
             throw new NoParkingSpaceAvailableException("No parking lots available to park");
+        }
 
-        ParkingTicket parkingTicket = parkingLots.get(0).park(new Object());
-        return parkingTicket;
+        if(parkingLots.get(0).isNotFull())
+            return parkingLots.get(0).park(new Object());
+
+        return null;
     }
 
 
